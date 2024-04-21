@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marketplace DApp</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1>Marketplace DApp</h1>
+    <button id="getUserBalanceBtn">Get User Balance</button>
+    <div id="userBalance"></div>
+    <form id="listItemForm">
+        <h2>List an Item</h2>
+        <label for="itemName">Name:</label><br>
+        <input type="text" id="itemName" name="itemName"><br>
+        <label for="itemDescription">Description:</label><br>
+        <textarea id="itemDescription" name="itemDescription"></textarea><br>
+        <label for="itemPrice">Price (in wei):</label><br>
+        <input type="number" id="itemPrice" name="itemPrice"><br><br>
+        <input type="submit" value="List Item">
+    </form>
+    <hr>
+    <form id="purchaseItemForm">
+        <h2>Purchase an Item</h2>
+        <label for="itemId">Item ID:</label><br>
+        <input type="number" id="itemId" name="itemId"><br><br>
+        <input type="submit" value="Purchase Item">
+    </form>
+    <hr>
+    <form id="depositForm">
+        <h2>Deposit Funds</h2>
+        <label for="depositAmount">Amount to Deposit (in wei):</label><br>
+        <input type="number" id="depositAmount" name="depositAmount"><br><br>
+        <input type="submit" value="Deposit Funds">
+    </form>
+    <hr>
+    <form id="withdrawForm">
+        <h2>Withdraw Funds</h2>
+        <label for="withdrawAmount">Amount to Withdraw (in wei):</label><br>
+        <input type="number" id="withdrawAmount" name="withdrawAmount"><br><br>
+        <input type="submit" value="Withdraw Funds">
+    </form>
+
+    <script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js/dist/web3.min.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
