@@ -463,6 +463,7 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
         const balance = await marketplaceContract.methods.checkBalance().call({ from: userAccount[0] });
+        document.getElementById("userBalance").innerText = `${web3.utils.fromWei(balance)} ether`;
         console.log("Balance:", balance);
     }
 
