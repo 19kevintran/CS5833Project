@@ -415,6 +415,37 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
+    // // Login function
+    // async function login() {
+    //     if (userAccount.length === 0) {
+    //         console.error("No account found");
+    //         return;
+    //     }
+    //     await marketplaceContract.methods.login().send({ from: userAccount[0] });
+    //     console.log("Logged in successfully");
+
+    //     // Retrieve user information
+    //     const balance = await marketplaceContract.methods.checkBalance().call({ from: userAccount[0] });
+    //     document.getElementById("userAddress").innerText = `Address: ${userAccount[0]}`;
+    //     // document.getElementById("userBalance").innerText = `Balance: ${web3.utils.fromWei(balance)} ether`;
+
+    //     // Hide login section and show user information section
+    //     document.getElementById("login").style.display = "none";
+    //     document.getElementById("userInfo").style.display = "block";
+    // }
+
+    // // Bind login button
+    // document.getElementById("loginBtn").addEventListener("click", login);
+
+    // // Logout function
+    // async function logout() {
+    //     if (userAccount.length === 0) {
+    //         console.error("No account found");
+    //         return;
+    //     }
+    //     await marketplaceContract.methods.logout().send({ from: userAccount[0] });
+    //     console.log("Logged out successfully");
+    // }
     // Login function
     async function login() {
         if (userAccount.length === 0) {
@@ -423,6 +454,15 @@ document.addEventListener("DOMContentLoaded", function () {
         }
         await marketplaceContract.methods.login().send({ from: userAccount[0] });
         console.log("Logged in successfully");
+
+        // Retrieve user information
+        const balance = await marketplaceContract.methods.checkBalance().call({ from: userAccount[0] });
+        document.getElementById("userAddress").innerText = `Address: ${userAccount[0]}`;
+        document.getElementById("userBalance").innerText = `Balance: ${web3.utils.fromWei(balance)} ether`;
+
+        // Toggle visibility of sections
+        document.getElementById("login").style.display = "none";
+        document.getElementById("userInfo").style.display = "block";
     }
 
     // Logout function
@@ -433,7 +473,21 @@ document.addEventListener("DOMContentLoaded", function () {
         }
         await marketplaceContract.methods.logout().send({ from: userAccount[0] });
         console.log("Logged out successfully");
+
+        // Clear user information
+        document.getElementById("userAddress").innerText = "";
+        document.getElementById("userBalance").innerText = "";
+
+        // Toggle visibility of sections
+        document.getElementById("userInfo").style.display = "none";
+        document.getElementById("login").style.display = "block";
     }
+
+    // Bind login button
+    document.getElementById("loginBtn").addEventListener("click", login);
+
+    // Bind logout button
+    document.getElementById("logoutBtn").addEventListener("click", logout);
 
     // List item function
     async function listItem(title, description, price) {

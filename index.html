@@ -11,14 +11,18 @@
         <h1>Simple Marketplace</h1>
     </header>
     <main>
-        <section id="login">
-            <h2>Login</h2>
-            <button id="loginBtn">Login</button>
-        </section>
-        <section id="logout">
-            <h2>Logout</h2>
-            <button id="logoutBtn">Logout</button>
-        </section>
+        <main>
+            <section id="login">
+                <h2>Login</h2>
+                <button id="loginBtn">Login</button>
+            </section>
+            <section id="userInfo" style="display: none;">
+                <h2>User Information</h2>
+                <p id="userAddress"></p>
+                <p id="userBalance"></p>
+                <button id="logoutBtn">Logout</button>
+            </section>
+        </main>
         <section id="listItem">
             <h2>List Item</h2>
             <input type="text" id="title" placeholder="Title">
