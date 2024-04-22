@@ -1,32 +1,8 @@
-window.addEventListener('load', async () => {
-    if (window.ethereum) {
-        window.web3 = new Web3(window.ethereum);
-        await window.ethereum.enable();
-    } else {
-        alert('Please install MetaMask to use this application');
-    }
-
-    const contractAddress = '0x85c7DD99c2957c443CeA9dF85820EDf622476Eaa'; // Replace with your contract address
+document.addEventListener("DOMContentLoaded", function () {
+    // Connect to the marketplace contract
+    const contractAddress = "0x57dcE26e3dF06b080855C35b5622a4f3e9971a98"; // Replace with your contract address
     const contractABI = [
         {
-            "inputs": [
-                {
-                    "internalType": "uint256",
-                    "name": "_amount",
-                    "type": "uint256"
-                }
-            ],
-            "name": "depositFunds",
-            "outputs": [],
-            "stateMutability": "payable",
-            "type": "function"
-        },
-        {
-            "inputs": [],
-            "stateMutability": "nonpayable",
-            "type": "constructor"
-        },
-        {
             "anonymous": false,
             "inputs": [
                 {
@@ -38,11 +14,11 @@ window.addEventListener('load', async () => {
                 {
                     "indexed": false,
                     "internalType": "uint256",
-                    "name": "amount",
+                    "name": "balance",
                     "type": "uint256"
                 }
             ],
-            "name": "FundsDeposited",
+            "name": "BalanceChecked",
             "type": "event"
         },
         {
@@ -50,27 +26,8 @@ window.addEventListener('load', async () => {
             "inputs": [
                 {
                     "indexed": true,
-                    "internalType": "address",
-                    "name": "user",
-                    "type": "address"
-                },
-                {
-                    "indexed": false,
                     "internalType": "uint256",
-                    "name": "amount",
-                    "type": "uint256"
-                }
-            ],
-            "name": "FundsWithdrawn",
-            "type": "event"
-        },
-        {
-            "anonymous": false,
-            "inputs": [
-                {
-                    "indexed": false,
-                    "internalType": "uint256",
-                    "name": "id",
+                    "name": "itemId",
                     "type": "uint256"
                 },
                 {
@@ -82,13 +39,7 @@ window.addEventListener('load', async () => {
                 {
                     "indexed": false,
                     "internalType": "string",
-                    "name": "name",
-                    "type": "string"
-                },
-                {
-                    "indexed": false,
-                    "internalType": "string",
-                    "name": "description",
+                    "name": "title",
                     "type": "string"
                 },
                 {
@@ -105,48 +56,36 @@ window.addEventListener('load', async () => {
             "anonymous": false,
             "inputs": [
                 {
-                    "indexed": false,
-                    "internalType": "uint256",
-                    "name": "id",
-                    "type": "uint256"
-                },
-                {
                     "indexed": true,
-                    "internalType": "address",
-                    "name": "seller",
-                    "type": "address"
+                    "internalType": "uint256",
+                    "name": "itemId",
+                    "type": "uint256"
                 },
                 {
                     "indexed": true,
                     "internalType": "address",
                     "name": "buyer",
                     "type": "address"
-                },
-                {
-                    "indexed": false,
-                    "internalType": "uint256",
-                    "name": "price",
-                    "type": "uint256"
                 }
             ],
-            "name": "ItemSold",
+            "name": "ItemPurchased",
             "type": "event"
         },
         {
             "inputs": [
                 {
                     "internalType": "string",
-                    "name": "_name",
+                    "name": "title",
                     "type": "string"
                 },
                 {
                     "internalType": "string",
-                    "name": "_description",
+                    "name": "description",
                     "type": "string"
                 },
                 {
                     "internalType": "uint256",
-                    "name": "_price",
+                    "name": "price",
                     "type": "uint256"
                 }
             ],
@@ -156,39 +95,235 @@ window.addEventListener('load', async () => {
             "type": "function"
         },
         {
-            "inputs": [
-                {
-                    "internalType": "uint256",
-                    "name": "_id",
-                    "type": "uint256"
-                }
-            ],
-            "name": "purchaseItem",
-            "outputs": [],
-            "stateMutability": "nonpayable",
-            "type": "function"
-        },
-        {
-            "inputs": [
-                {
-                    "internalType": "uint256",
-                    "name": "_amount",
-                    "type": "uint256"
-                }
-            ],
-            "name": "withdrawFunds",
+            "inputs": [],
+            "name": "login",
             "outputs": [],
             "stateMutability": "nonpayable",
             "type": "function"
         },
         {
             "inputs": [],
-            "name": "itemCount",
+            "name": "logout",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "uint256",
+                    "name": "itemId",
+                    "type": "uint256"
+                }
+            ],
+            "name": "purchaseItem",
+            "outputs": [],
+            "stateMutability": "payable",
+            "type": "function"
+        },
+        {
+            "anonymous": false,
+            "inputs": [
+                {
+                    "indexed": true,
+                    "internalType": "address",
+                    "name": "user",
+                    "type": "address"
+                },
+                {
+                    "indexed": false,
+                    "internalType": "uint256",
+                    "name": "balance",
+                    "type": "uint256"
+                }
+            ],
+            "name": "UserLoggedIn",
+            "type": "event"
+        },
+        {
+            "anonymous": false,
+            "inputs": [
+                {
+                    "indexed": true,
+                    "internalType": "address",
+                    "name": "user",
+                    "type": "address"
+                },
+                {
+                    "indexed": false,
+                    "internalType": "uint256",
+                    "name": "balance",
+                    "type": "uint256"
+                }
+            ],
+            "name": "UserLoggedOut",
+            "type": "event"
+        },
+        {
+            "anonymous": false,
+            "inputs": [
+                {
+                    "indexed": true,
+                    "internalType": "address",
+                    "name": "user",
+                    "type": "address"
+                },
+                {
+                    "indexed": false,
+                    "internalType": "uint256",
+                    "name": "amount",
+                    "type": "uint256"
+                }
+            ],
+            "name": "Withdrawal",
+            "type": "event"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "address",
+                    "name": "",
+                    "type": "address"
+                }
+            ],
+            "name": "accounts",
+            "outputs": [
+                {
+                    "internalType": "bool",
+                    "name": "isLoggedIn",
+                    "type": "bool"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "balance",
+                    "type": "uint256"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [],
+            "name": "checkBalance",
             "outputs": [
                 {
                     "internalType": "uint256",
                     "name": "",
                     "type": "uint256"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [],
+            "name": "getAllItems",
+            "outputs": [
+                {
+                    "components": [
+                        {
+                            "internalType": "uint256",
+                            "name": "id",
+                            "type": "uint256"
+                        },
+                        {
+                            "internalType": "address payable",
+                            "name": "seller",
+                            "type": "address"
+                        },
+                        {
+                            "internalType": "address payable",
+                            "name": "buyer",
+                            "type": "address"
+                        },
+                        {
+                            "internalType": "string",
+                            "name": "title",
+                            "type": "string"
+                        },
+                        {
+                            "internalType": "string",
+                            "name": "description",
+                            "type": "string"
+                        },
+                        {
+                            "internalType": "uint256",
+                            "name": "price",
+                            "type": "uint256"
+                        },
+                        {
+                            "internalType": "bool",
+                            "name": "isSold",
+                            "type": "bool"
+                        }
+                    ],
+                    "internalType": "struct Marketplace.Item[]",
+                    "name": "",
+                    "type": "tuple[]"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "uint256",
+                    "name": "itemId",
+                    "type": "uint256"
+                }
+            ],
+            "name": "getItemBuyer",
+            "outputs": [
+                {
+                    "internalType": "address",
+                    "name": "",
+                    "type": "address"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "uint256",
+                    "name": "itemId",
+                    "type": "uint256"
+                }
+            ],
+            "name": "getItemSeller",
+            "outputs": [
+                {
+                    "internalType": "address",
+                    "name": "",
+                    "type": "address"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [],
+            "name": "getUserListedItems",
+            "outputs": [
+                {
+                    "internalType": "uint256[]",
+                    "name": "",
+                    "type": "uint256[]"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [],
+            "name": "getUserPurchasedItems",
+            "outputs": [
+                {
+                    "internalType": "uint256[]",
+                    "name": "",
+                    "type": "uint256[]"
                 }
             ],
             "stateMutability": "view",
@@ -215,8 +350,13 @@ window.addEventListener('load', async () => {
                     "type": "address"
                 },
                 {
+                    "internalType": "address payable",
+                    "name": "buyer",
+                    "type": "address"
+                },
+                {
                     "internalType": "string",
-                    "name": "name",
+                    "name": "title",
                     "type": "string"
                 },
                 {
@@ -231,7 +371,7 @@ window.addEventListener('load', async () => {
                 },
                 {
                     "internalType": "bool",
-                    "name": "sold",
+                    "name": "isSold",
                     "type": "bool"
                 }
             ],
@@ -240,26 +380,7 @@ window.addEventListener('load', async () => {
         },
         {
             "inputs": [],
-            "name": "owner",
-            "outputs": [
-                {
-                    "internalType": "address payable",
-                    "name": "",
-                    "type": "address"
-                }
-            ],
-            "stateMutability": "view",
-            "type": "function"
-        },
-        {
-            "inputs": [
-                {
-                    "internalType": "address",
-                    "name": "",
-                    "type": "address"
-                }
-            ],
-            "name": "userBalances",
+            "name": "nextItemId",
             "outputs": [
                 {
                     "internalType": "uint256",
@@ -272,65 +393,102 @@ window.addEventListener('load', async () => {
         }
     ];
 
-    const contract = new web3.eth.Contract(contractABI, contractAddress);
+    let web3;
+    let marketplaceContract;
+    let userAccount;
 
-    // Function to get user balance
-    const getUserBalance = async () => {
-        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-        const userAddress = accounts[0];
-        const balance = await contract.methods.userBalances(userAddress).call();
-        return balance;
-    };
+    async function init() {
+        // Check if Web3 is injected by the browser (MetaMask)
+        if (typeof window.ethereum !== "undefined") {
+            web3 = new Web3(window.ethereum);
+            try {
+                // Request account access if needed
+                await window.ethereum.request({ method: "eth_requestAccounts" });
+                // Accounts now exposed
+                userAccount = await web3.eth.getAccounts();
+                marketplaceContract = new web3.eth.Contract(contractABI, contractAddress);
+            } catch (error) {
+                console.error("User denied account access:", error);
+            }
+        } else {
+            console.error("Please install MetaMask to use this application");
+        }
+    }
 
-    // Event listener for listing an item
-    document.getElementById('listItemForm').addEventListener('submit', async (event) => {
-        event.preventDefault();
-        const itemName = document.getElementById('itemName').value;
-        const itemDescription = document.getElementById('itemDescription').value;
-        const itemPrice = document.getElementById('itemPrice').value;
-        
-        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-        const fromAddress = accounts[0]; // Assuming the first account is used
+    // Login function
+    async function login() {
+        if (userAccount.length === 0) {
+            console.error("No account found");
+            return;
+        }
+        await marketplaceContract.methods.login().send({ from: userAccount[0] });
+        console.log("Logged in successfully");
+    }
 
-        await contract.methods.listItem(itemName, itemDescription, itemPrice).send({ from: fromAddress });
+    // Logout function
+    async function logout() {
+        if (userAccount.length === 0) {
+            console.error("No account found");
+            return;
+        }
+        await marketplaceContract.methods.logout().send({ from: userAccount[0] });
+        console.log("Logged out successfully");
+    }
+
+    // List item function
+    async function listItem(title, description, price) {
+        if (userAccount.length === 0) {
+            console.error("No account found");
+            return;
+        }
+        const weiPrice = web3.utils.toWei(price.toString(), 'ether');
+        await marketplaceContract.methods.listItem(title, description, weiPrice).send({ from: userAccount[0] });
+        console.log("Item listed successfully");
+    }
+
+    // Purchase item function
+    async function purchaseItem(itemId) {
+        if (userAccount.length === 0) {
+            console.error("No account found");
+            return;
+        }
+        await marketplaceContract.methods.purchaseItem(itemId).send({ from: userAccount[0] });
+        console.log("Item purchased successfully");
+    }
+
+    // Check balance function
+    async function checkBalance() {
+        if (userAccount.length === 0) {
+            console.error("No account found");
+            return;
+        }
+        const balance = await marketplaceContract.methods.checkBalance().call({ from: userAccount[0] });
+        console.log("Balance:", balance);
+    }
+
+    // Bind login button
+    document.getElementById("loginBtn").addEventListener("click", login);
+
+    // Bind logout button
+    document.getElementById("logoutBtn").addEventListener("click", logout);
+
+    // Bind list item button
+    document.getElementById("listItemBtn").addEventListener("click", function () {
+        const title = document.getElementById("title").value;
+        const description = document.getElementById("description").value;
+        const price = document.getElementById("price").value;
+        listItem(title, description, price);
     });
 
-    // Event listener for purchasing an item
-    document.getElementById('purchaseItemForm').addEventListener('submit', async (event) => {
-        event.preventDefault();
-        const itemId = document.getElementById('itemId').value;
-        
-        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-        const fromAddress = accounts[0]; // Assuming the first account is used
-
-        await contract.methods.purchaseItem(itemId).send({ from: fromAddress });
+    // Bind purchase item button
+    document.getElementById("purchaseItemBtn").addEventListener("click", function () {
+        const itemId = document.getElementById("itemId").value;
+        purchaseItem(itemId);
     });
 
-    // Event listener for depositing funds
-    document.getElementById('depositForm').addEventListener('submit', async (event) => {
-        event.preventDefault();
-        const depositAmount = document.getElementById('depositAmount').value;
-        
-        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-        const fromAddress = accounts[0]; // Assuming the first account is used
-
-        await contract.methods.depositFunds(depositAmount).send({ from: fromAddress, value: depositAmount });
-    });
-
-    // Event listener for withdrawing funds
-    document.getElementById('withdrawForm').addEventListener('submit', async (event) => {
-        event.preventDefault();
-        const withdrawAmount = document.getElementById('withdrawAmount').value;
-        
-        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-        const fromAddress = accounts[0]; // Assuming the first account is used
-
-        await contract.methods.withdrawFunds(withdrawAmount).send({ from: fromAddress });
-    });
-
-    // Event listener for getting user balance
-    document.getElementById('getUserBalanceBtn').addEventListener('click', async () => {
-        const balance = await getUserBalance();
-        document.getElementById('userBalance').innerText = `Your balance: ${balance} wei`;
-    });
+    // Bind check balance button
+    document.getElementById("checkBalanceBtn").addEventListener("click", checkBalance);
+    
+    // Initialize
+    init();
 });
