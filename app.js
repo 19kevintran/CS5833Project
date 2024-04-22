@@ -447,14 +447,17 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // Purchase item function
-    async function purchaseItem(itemId) {
+    async function purchaseItem(itemId, amountToPay) {
         if (userAccount.length === 0) {
             console.error("No account found");
             return;
         }
-        await marketplaceContract.methods.purchaseItem(itemId).send({ from: userAccount[0] });
+        const weiAmount = web3.utils.toWei(amountToPay.toString(), 'ether');
+        await marketplaceContract.methods.purchaseItem(itemId).send({ from: userAccount[0], value: weiAmount });
         console.log("Item purchased successfully");
     }
+    
+    
 
     // Check balance function
     async function checkBalance() {
@@ -484,7 +487,8 @@ document.addEventListener("DOMContentLoaded", function () {
     // Bind purchase item button
     document.getElementById("purchaseItemBtn").addEventListener("click", function () {
         const itemId = document.getElementById("itemId").value;
-        purchaseItem(itemId);
+        const amountToPay = document.getElementById("amountToPay").value;
+        purchaseItem(itemId, amountToPay);
     });
 
     // Bind check balance button
