@@ -589,18 +589,10 @@ async function getAllItems() {
   try {
     const items = await marketplaceContract.methods.getAllItems().call();
     const itemListElement = document.getElementById("itemList");
-
-    // Clear out the current list to make room for the updated list
     itemListElement.innerHTML = "";
-
-    // Add each item to the list with all details
     items.forEach((item) => {
       const itemElement = document.createElement("li");
-
-      // Format the price from wei to ether
       const priceInEth = web3.utils.fromWei(item.price.toString(), "ether");
-
-      // Use divs for each piece of information for styling purposes
       const itemDetails = `
   <div class="item-details">
     <div class="item-ID">ID: ${item.id}</div>
@@ -612,24 +604,32 @@ async function getAllItems() {
     <div class="item-sold">Sold: ${item.isSold ? "Yes" : "No"}</div>
     ${
       !item.isSold
-        ? '<button class="purchase-button" onclick="purchaseItem(' +
-          item.id +
-          ')">Purchase</button>'
+        ? `<button class="purchase-button" onclick="purchaseItem(${item.id})">Purchase</button>`
         : ""
     }
-  </div>
-`;
-
-      // Conditionally add a "sold" badge
-      if (item.isSold) {
-        itemElement.innerHTML += '<div class="sold-badge">SOLD</div>';
-      }
-
-      itemElement.innerHTML += itemDetails;
+  </div>`;
+      itemElement.innerHTML = itemDetails;
       itemListElement.appendChild(itemElement);
     });
   } catch (error) {
     console.error("Error fetching all items:", error);
+  }
+}
+
+async function purchaseItem(itemId) {
+  try {
+    const item = await marketplaceContract.methods.items(itemId).call();
+    const priceInWei = item.price;
+    const priceInEth = web3.utils.fromWei(priceInWei, "ether");
+
+    const tx = await marketplaceContract.methods
+      .purchaseItem(itemId)
+      .send({ from: account, value: priceInEth });
+    console.log("Purchase successful:", tx);
+    await getAllItems(); // Refresh the list to reflect the purchase
+  } catch (error) {
+    console.error("Error purchasing item:", error);
+    alert("Error purchasing item: " + error.message);
   }
 }
 
@@ -640,7 +640,7 @@ async function initContract() {
 document.addEventListener("DOMContentLoaded", async () => {
   await connectWallet();
   await initContract();
-  getAllItems();
+  await getAllItems();
 
   const listItemForm = document.getElementById("listItemForm");
   listItemForm.addEventListener("submit", async (event) => {
