@@ -635,10 +635,6 @@ async function purchaseItem(itemId) {
   }
 }
 
-
-  
-
-  
 async function initContract() {
   marketplaceContract = new web3.eth.Contract(abi, contractAddress);
 }
