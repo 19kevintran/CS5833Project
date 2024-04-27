@@ -13,6 +13,22 @@
             <p><strong>Account:</strong> <span id="account"></span></p>
             <p><strong>Balance:</strong> <span id="balance"></span> ETH</p>
         </div>
+        <div id="listItemForm">
+            <h2>List an Item</h2>
+            <form id="listItemForm">
+                <label for="title">Title:</label>
+                <input type="text" id="title" name="title" required>
+                <label for="description">Description:</label>
+                <textarea id="description" name="description" required></textarea>
+                <label for="price">Price (ETH):</label>
+                <input type="number" id="price" name="price" required>
+                <button type="submit">List Item</button>
+            </form>
+        </div>
+        <div id="allItems">
+            <h2>All Items</h2>
+            <ul id="itemList"></ul>
+        </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/web3@1.5.2/dist/web3.min.js"></script>
     <script src="app.js"></script>

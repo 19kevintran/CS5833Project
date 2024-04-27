@@ -526,7 +526,6 @@ async function connectWallet() {
     if (window.ethereum) {
         web3 = new Web3(window.ethereum);
         try {
-            // Request account access if needed
             const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
             if (accounts.length === 0) {
                 console.error("No account found. Make sure MetaMask is connected.");
@@ -534,15 +533,10 @@ async function connectWallet() {
             }
             account = accounts[0];
             document.getElementById('account').textContent = account;
-            updateBalance(); // Update balance immediately after connecting wallet
-            
-            // Listen for changes in the connected accounts
+            updateBalance();
             window.ethereum.on('accountsChanged', function (newAccounts) {
-                // Update the account variable
                 account = newAccounts[0];
-                // Update the displayed account
                 document.getElementById('account').textContent = account;
-                // Update the balance for the new account
                 updateBalance();
             });
         } catch (error) {
@@ -553,10 +547,23 @@ async function connectWallet() {
     }
 }
 
-// Refresh the page
-function refreshPage() {
-    window.location.reload();
+async function listItem(title, description, priceWei) {
+    try {
+        // Convert the price to Wei if it's in Ether.
+        const priceInWei = web3.utils.toWei(priceWei, 'ether');
+        // Estimate gas with a manual increase to avoid out-of-gas errors.
+        const gasEstimate = await marketplaceContract.methods.listItem(title, description, priceInWei).estimateGas({ from: account });
+        const gasLimit = gasEstimate * 1.5; // Increase gas limit by 50% as a buffer.
+        // Send the transaction with the calculated gas limit.
+        const tx = await marketplaceContract.methods.listItem(title, description, priceInWei).send({ from: account, gas: gasLimit });
+        console.log("Item listed successfully:", tx);
+        await getAllItems();
+    } catch (error) {
+        console.error("Error listing item:", error);
+        alert("Error listing item: " + error.message);
+    }
 }
+
 
 async function updateBalance() {
     if (account && web3.utils.isAddress(account)) {
@@ -564,7 +571,7 @@ async function updateBalance() {
             if (err) {
                 console.error("Error fetching balance:", err);
             } else {
-                document.getElementById('balance').textContent = web3.utils.fromWei(balance, 'ether');
+                document.getElementById('balance').textContent = web3.utils.fromWei(balance, 'ether') + ' ETH';
             }
         });
     } else {
@@ -572,6 +579,36 @@ async function updateBalance() {
     }
 }
 
-// Immediately try to connect to the wallet when the script is loaded
-connectWallet();
+async function getAllItems() {
+    try {
+        const items = await marketplaceContract.methods.getAllItems().call();
+        const itemList = document.getElementById('itemList');
+        itemList.innerHTML = ''; // Clear previous items
+        items.forEach(item => {
+            const li = document.createElement('li');
+            li.textContent = `${item.title} - ${web3.utils.fromWei(item.price.toString(), 'ether')} ETH`;
+            itemList.appendChild(li);
+        });
+    } catch (error) {
+        console.error("Error fetching all items:", error);
+    }
+}
 
+async function initContract() {
+    marketplaceContract = new web3.eth.Contract(abi, contractAddress);
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
+    await connectWallet();
+    await initContract();
+    getAllItems();
+
+    const listItemForm = document.getElementById('listItemForm');
+    listItemForm.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const title = document.getElementById('title').value;
+        const description = document.getElementById('description').value;
+        const price = document.getElementById('price').value;
+        await listItem(title, description, price);
+    });
+});
