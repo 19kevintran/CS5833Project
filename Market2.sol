@@ -12,56 +12,25 @@ contract Marketplace {
         bool isSold;
     }
 
-    struct Account {
-        bool isLoggedIn;
-        uint balance;
-        uint[] listedItems;
-        uint[] purchasedItems;
-    }
-
-    mapping(address => Account) public accounts;
+    mapping(address => uint[]) public listedItems;
+    mapping(address => uint[]) public purchasedItems;
     Item[] public items;
     uint public nextItemId;
 
-    event UserLoggedIn(address indexed user, uint balance);
-    event UserLoggedOut(address indexed user, uint balance);
     event ItemListed(uint indexed itemId, address indexed seller, string title, uint price);
     event ItemPurchased(uint indexed itemId, address indexed buyer);
     event Withdrawal(address indexed user, uint amount);
     event BalanceChecked(address indexed user, uint balance);
 
-    modifier onlyLoggedIn() {
-        require(accounts[msg.sender].isLoggedIn, "User must be logged in");
-        _;
-    }
-
-    function login() public {
-        require(!accounts[msg.sender].isLoggedIn, "User is already logged in");
-        accounts[msg.sender].isLoggedIn = true;
-        if (accounts[msg.sender].balance == 0) {
-            accounts[msg.sender].balance = msg.sender.balance;
-        }
-        emit UserLoggedIn(msg.sender, accounts[msg.sender].balance);
-    }
-
-    function logout() public {
-        require(accounts[msg.sender].isLoggedIn, "User is not logged in");
-        emit UserLoggedOut(msg.sender, accounts[msg.sender].balance);
-        delete accounts[msg.sender];
-    }
-
-    function listItem(string memory title, string memory description, uint price) public onlyLoggedIn {
+    function listItem(string memory title, string memory description, uint price) public {
         require(price > 0, "Price must be at least 1 wei");
         uint itemId = nextItemId++;
         items.push(Item(itemId, payable(msg.sender), payable(address(0)), title, description, price, false));
-        accounts[msg.sender].listedItems.push(itemId);
+        listedItems[msg.sender].push(itemId);
         emit ItemListed(itemId, msg.sender, title, price);
-        
-        // Update seller's balance
-        accounts[msg.sender].balance += price;
     }
 
-    function purchaseItem(uint itemId) public payable onlyLoggedIn {
+    function purchaseItem(uint itemId) public payable {
         require(itemId < nextItemId, "Item does not exist");
         Item storage item = items[itemId];
         require(!item.isSold, "Item is already sold");
@@ -69,28 +38,20 @@ contract Marketplace {
         item.buyer = payable(msg.sender);
         item.seller.transfer(msg.value);
         item.isSold = true;
-
-        // Update buyer's balance
-        accounts[msg.sender].balance += msg.value;
-        
-        // Update purchased items list
-        accounts[msg.sender].purchasedItems.push(itemId);
-
+        purchasedItems[msg.sender].push(itemId);
         emit ItemPurchased(itemId, msg.sender);
     }
 
-
     function checkBalance() public view returns (uint) {
-        require(accounts[msg.sender].isLoggedIn, "User must be logged in");
-        return accounts[msg.sender].balance;
+        return msg.sender.balance;
     }
 
-    function getUserListedItems() public view onlyLoggedIn returns (uint[] memory) {
-        return accounts[msg.sender].listedItems;
+    function getUserListedItems() public view returns (uint[] memory) {
+        return listedItems[msg.sender];
     }
 
-    function getUserPurchasedItems() public view onlyLoggedIn returns (uint[] memory) {
-        return accounts[msg.sender].purchasedItems;
+    function getUserPurchasedItems() public view returns (uint[] memory) {
+        return purchasedItems[msg.sender];
     }
 
     function getAllItems() public view returns (Item[] memory) {
@@ -106,8 +67,45 @@ contract Marketplace {
         require(itemId < nextItemId, "Item does not exist");
         return items[itemId].buyer;
     }
+    
+    function getItemsForSale() public view returns (Item[] memory) {
+        uint count = 0;
+        for (uint i = 0; i < items.length; i++) {
+            if (!items[i].isSold) {
+                count++;
+            }
+        }
+        Item[] memory forSale = new Item[](count);
+        uint index = 0;
+        for (uint j = 0; j < items.length; j++) {
+            if (!items[j].isSold) {
+                forSale[index] = items[j];
+                index++;
+            }
+        }
+        return forSale;
+    }
+    
+    function getItemsSold() public view returns (Item[] memory) {
+        uint count = 0;
+        for (uint i = 0; i < items.length; i++) {
+            if (items[i].isSold) {
+                count++;
+            }
+        }
+        Item[] memory soldItems = new Item[](count);
+        uint index = 0;
+        for (uint j = 0; j < items.length; j++) {
+            if (items[j].isSold) {
+                soldItems[index] = items[j];
+                index++;
+            }
+        }
+        return soldItems;
+    }
+    
+    function getItemInformation(uint itemId) public view returns (Item memory) {
+        require(itemId < nextItemId, "Item does not exist");
+        return items[itemId];
+    }
 }
-
-
-
-
