@@ -603,7 +603,7 @@ async function getAllItems() {
       // Use divs for each piece of information for styling purposes
       const itemDetails = `
       <div class="item-details">
-      <div class="item-title">ID: ${item.id}</div>
+      <div class="item-ID">ID: ${item.id}</div>
         <div class="item-title">Title: ${item.title}</div>
         <div class="item-description">Description: ${item.description}</div>
         <div class="item-price">Price: ${priceInEth} ETH</div>
