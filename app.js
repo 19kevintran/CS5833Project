@@ -602,16 +602,23 @@ async function getAllItems() {
 
       // Use divs for each piece of information for styling purposes
       const itemDetails = `
-      <div class="item-details">
-      <div class="item-ID">ID: ${item.id}</div>
-        <div class="item-title">Title: ${item.title}</div>
-        <div class="item-description">Description: ${item.description}</div>
-        <div class="item-price">Price: ${priceInEth} ETH</div>
-        <div class="item-seller">Seller: ${item.seller}</div>
-        <div class="item-buyer">Buyer: ${item.buyer || "N/A"}</div>
-        <div class="item-sold">Sold: ${item.isSold ? "Yes" : "No"}</div>
-      </div>
-    `;
+  <div class="item-details">
+    <div class="item-ID">ID: ${item.id}</div>
+    <div class="item-title">Title: ${item.title}</div>
+    <div class="item-description">Description: ${item.description}</div>
+    <div class="item-price">Price: ${priceInEth} ETH</div>
+    <div class="item-seller">Seller: ${item.seller}</div>
+    <div class="item-buyer">Buyer: ${item.buyer || "N/A"}</div>
+    <div class="item-sold">Sold: ${item.isSold ? "Yes" : "No"}</div>
+    ${
+      !item.isSold
+        ? '<button class="purchase-button" onclick="purchaseItem(' +
+          item.id +
+          ')">Purchase</button>'
+        : ""
+    }
+  </div>
+`;
 
       // Conditionally add a "sold" badge
       if (item.isSold) {
