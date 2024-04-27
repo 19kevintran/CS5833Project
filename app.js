@@ -621,18 +621,24 @@ async function purchaseItem(itemId) {
     const item = await marketplaceContract.methods.items(itemId).call();
     const priceInWei = item.price;
     const priceInEth = web3.utils.fromWei(priceInWei, "ether");
-
+    console.log(priceInWei);
+    console.log(priceInEth);
     const tx = await marketplaceContract.methods
       .purchaseItem(itemId)
-      .send({ from: account, value: priceInEth });
+      .send({ from: account, value: priceInWei});
     console.log("Purchase successful:", tx);
     await getAllItems(); // Refresh the list to reflect the purchase
+    updateBalance();
   } catch (error) {
     console.error("Error purchasing item:", error);
     alert("Error purchasing item: " + error.message);
   }
 }
 
+
+  
+
+  
 async function initContract() {
   marketplaceContract = new web3.eth.Contract(abi, contractAddress);
 }
