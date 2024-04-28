@@ -1,4 +1,4 @@
-const contractAddress = "0x68f46669fdecB3BfEfBC33d6f71A02314bED067d";
+const contractAddress = "0xc7Bb328Af8d2A89D0f924A9AB29a5119400DF0cd";
 const abi = [
 	{
 		"anonymous": false,
@@ -552,12 +552,12 @@ async function connectWallet() {
 async function listItem(title, description, priceWei) {
   try {
     // Convert the price to Wei if it's in Ether.
-    const priceInWei = web3.utils.toWei(priceWei, "ether");
+    const priceInWei = web3.utils.toWei(priceWei.toString(), "ether");
     // Estimate gas with a manual increase to avoid out-of-gas errors.
     const gasEstimate = await marketplaceContract.methods
       .listItem(title, description, priceInWei)
       .estimateGas({ from: account });
-    const gasLimit = gasEstimate * 1.5; // Increase gas limit by 50% as a buffer.
+    const gasLimit = Math.floor(gasEstimate * 1.5); // Increase gas limit by 50% as a buffer.
     // Send the transaction with the calculated gas limit.
     const tx = await marketplaceContract.methods
       .listItem(title, description, priceInWei)

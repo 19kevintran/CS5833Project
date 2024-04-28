@@ -34,6 +34,7 @@ contract Marketplace {
         require(itemId < nextItemId, "Item does not exist");
         Item storage item = items[itemId];
         require(!item.isSold, "Item is already sold");
+        require(msg.sender != item.seller, "Seller cannot buy their own item");
         require(msg.value == item.price, "Please submit the asking price in order to complete the purchase");
         item.buyer = payable(msg.sender);
         item.seller.transfer(msg.value);

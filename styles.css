@@ -73,7 +73,7 @@ button[type="submit"]:hover {
 
 /* Special styling for price and status */
 .item-ID {
-    color: #000000;  /* Green for price */
+    color: #000000;  
 }
 
 /* Special styling for price and status */
@@ -87,7 +87,7 @@ button[type="submit"]:hover {
 }
 
 .purchase-button {
-    background-color: #007bff; /* Green */
+    background-color: #007bff;
     border: none;
     color: white;
     padding: 10px 20px;
@@ -101,7 +101,7 @@ button[type="submit"]:hover {
   }
   
   .purchase-button:hover {
-    background-color: #0056b3; /* Darker Green */
+    background-color: #0056b3;
   }
 
 
