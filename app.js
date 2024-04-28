@@ -1,4 +1,4 @@
-const contractAddress = "0xf6E56d870D6419d68eb6DedCEC1306efF155F8f0";
+const contractAddress = "0x68f46669fdecB3BfEfBC33d6f71A02314bED067d";
 const abi = [
 	{
 		"anonymous": false,
@@ -595,7 +595,6 @@ async function getAllItems() {
       const priceInEth = web3.utils.fromWei(item.price.toString(), "ether");
       const itemDetails = `
   <div class="item-details">
-    <div class="item-ID">ID: ${item.id}</div>
     <div class="item-title">Title: ${item.title}</div>
     <div class="item-description">Description: ${item.description}</div>
     <div class="item-price">Price: ${priceInEth} ETH</div>
