@@ -34,10 +34,6 @@ npm start
 
 Open your browser and navigate to `http://localhost:PORT_NUMBER` (or the appropriate port) to view the application.
 
-## Contributing
-
-Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduct and the process for submitting pull requests.
-
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
