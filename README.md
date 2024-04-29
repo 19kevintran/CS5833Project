@@ -2,6 +2,10 @@
 
 This is my final project for CS5833 (Blockchains and Cryptocurrencies). This is a DApp Web3 application that will allow users to list and sell assets. 
 
+## To access the website
+
+Visit https://19kevintran.github.io/CS5833Project/
+
 ## Prerequisites
 
 Ensure you have the following installed on your system:
