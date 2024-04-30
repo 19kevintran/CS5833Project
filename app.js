@@ -522,8 +522,11 @@ const abi = [
 	}
 ];
 
+// account 
 let account;
+// Marketplace.sol contract
 let marketplaceContract;
+// web3 
 let web3;
 
 // Connect to the Sepolia network.
@@ -676,8 +679,11 @@ async function initContract() {
 
 // connect to the wallet, initiate the contract, and display all items
 document.addEventListener("DOMContentLoaded", async () => {
+  // call connect wallet function
   await connectWallet();
+  // initate the contract
   await initContract();
+  // display all items
   await getAllItems();
   const listItemForm = document.getElementById("listItemForm");
   listItemForm.addEventListener("submit", async (event) => {
