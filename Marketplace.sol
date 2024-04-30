@@ -19,9 +19,11 @@ contract Marketplace {
 
     event ItemListed(uint indexed itemId, address indexed seller, string title, uint price);
     event ItemPurchased(uint indexed itemId, address indexed buyer);
-    event Withdrawal(address indexed user, uint amount);
-    event BalanceChecked(address indexed user, uint balance);
 
+    function checkBalance() public view returns (uint) {
+        return msg.sender.balance;
+    }
+    
     function listItem(string memory title, string memory description, uint price) public {
         require(price > 0, "Price must be at least 1 wei");
         uint itemId = nextItemId++;
@@ -43,70 +45,7 @@ contract Marketplace {
         emit ItemPurchased(itemId, msg.sender);
     }
 
-    function checkBalance() public view returns (uint) {
-        return msg.sender.balance;
-    }
-
-    function getUserListedItems() public view returns (uint[] memory) {
-        return listedItems[msg.sender];
-    }
-
-    function getUserPurchasedItems() public view returns (uint[] memory) {
-        return purchasedItems[msg.sender];
-    }
-
     function getAllItems() public view returns (Item[] memory) {
         return items;
-    }
-
-    function getItemSeller(uint itemId) public view returns (address) {
-        require(itemId < nextItemId, "Item does not exist");
-        return items[itemId].seller;
-    }
-
-    function getItemBuyer(uint itemId) public view returns (address) {
-        require(itemId < nextItemId, "Item does not exist");
-        return items[itemId].buyer;
-    }
-    
-    function getItemsForSale() public view returns (Item[] memory) {
-        uint count = 0;
-        for (uint i = 0; i < items.length; i++) {
-            if (!items[i].isSold) {
-                count++;
-            }
-        }
-        Item[] memory forSale = new Item[](count);
-        uint index = 0;
-        for (uint j = 0; j < items.length; j++) {
-            if (!items[j].isSold) {
-                forSale[index] = items[j];
-                index++;
-            }
-        }
-        return forSale;
-    }
-    
-    function getItemsSold() public view returns (Item[] memory) {
-        uint count = 0;
-        for (uint i = 0; i < items.length; i++) {
-            if (items[i].isSold) {
-                count++;
-            }
-        }
-        Item[] memory soldItems = new Item[](count);
-        uint index = 0;
-        for (uint j = 0; j < items.length; j++) {
-            if (items[j].isSold) {
-                soldItems[index] = items[j];
-                index++;
-            }
-        }
-        return soldItems;
-    }
-    
-    function getItemInformation(uint itemId) public view returns (Item memory) {
-        require(itemId < nextItemId, "Item does not exist");
-        return items[itemId];
     }
 }
