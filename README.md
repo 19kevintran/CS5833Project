@@ -12,7 +12,7 @@ Ensure you have the following installed on your system:
 
 - [Node.js](https://nodejs.org/) (v14 or higher)
 - [npm](https://www.npmjs.com/) (v6 or higher)
-- [Metamask](https://metamask.io/download/) (HIGHLY IMPORTANT!)
+- [Metamask](https://metamask.io/download/) (HIGHLY IMPORTANT! Need MetaMask browser extension and wallet)
 
 
 ## Installation
