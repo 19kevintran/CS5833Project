@@ -1,6 +1,6 @@
 # CS5833Project
 
-This is my final project for CS5833 (Blockchains and Cryptocurrencies). This is a DApp Web3 application that will allow users to list and sell assets. 
+This is my final project for CS5833 (Blockchains and Cryptocurrencies). This is a Web3 DApp application that will allow users to list and sell assets. 
 
 ## To access the website
 
