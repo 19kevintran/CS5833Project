@@ -622,7 +622,7 @@ async function getAllItems() {
       const priceInEth = web3.utils.fromWei(item.price.toString(), "ether");
 	  // display item title, description, price, the address of the seller and buyer, and boolean avaliability status of the item
 	  // if item sold, purchase button will not display 
-	  // if item avaiable for purcahse, purcahse button will display  
+	  // if item avaiable for purcahse, purchase button will display  
       const itemDetails = `
   <div class="item-details">
     <div class="item-title">Title: ${item.title}</div>
@@ -649,7 +649,7 @@ async function getAllItems() {
 // purcahse item function
 async function purchaseItem(itemId) {
   try {
-	// item function from the contract
+	// item by id 
     const item = await marketplaceContract.methods.items(itemId).call();
     const priceInWei = item.price;
     const priceInEth = web3.utils.fromWei(priceInWei, "ether");
@@ -685,12 +685,16 @@ document.addEventListener("DOMContentLoaded", async () => {
   await initContract();
   // display all items
   await getAllItems();
+  // list item form from HTML
   const listItemForm = document.getElementById("listItemForm");
+  // listen to the submit event of the list item form
   listItemForm.addEventListener("submit", async (event) => {
     event.preventDefault();
+	// get the title, description, and price of the item from the list item form
     const title = document.getElementById("title").value;
     const description = document.getElementById("description").value;
     const price = document.getElementById("price").value;
+	// call listItem function
     await listItem(title, description, price);
   });
 });
