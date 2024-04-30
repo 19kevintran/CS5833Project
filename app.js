@@ -1,4 +1,7 @@
+// contract address
 const contractAddress = "0xc7Bb328Af8d2A89D0f924A9AB29a5119400DF0cd";
+
+// contract abi
 const abi = [
 	{
 		"anonymous": false,
@@ -518,37 +521,47 @@ const abi = [
 		"type": "function"
 	}
 ];
+
 let account;
 let marketplaceContract;
 let web3;
 
+// Connect to the Sepolia network.
 async function connectWallet() {
   if (window.ethereum) {
+	// use web3
     web3 = new Web3(window.ethereum);
     try {
       const accounts = await window.ethereum.request({
         method: "eth_requestAccounts",
       });
+	  // if no account was found
       if (accounts.length === 0) {
         console.error("No account found. Make sure MetaMask is connected.");
         return;
       }
       account = accounts[0];
       document.getElementById("account").textContent = account;
-      updateBalance();
+	  // get the account balance
+	  updateBalance();
+	  // if the wallet account changes
       window.ethereum.on("accountsChanged", function (newAccounts) {
         account = newAccounts[0];
         document.getElementById("account").textContent = account;
-        updateBalance();
+        // get the new wallet account balance
+		updateBalance();
       });
     } catch (error) {
+	  // if there is an error connecting the wallet 
       console.error("Error connecting wallet:", error);
     }
   } else {
+	// if MetaMask is not installed
     console.error("Ethereum wallet is not connected. Please install MetaMask.");
   }
 }
 
+// list an item 
 async function listItem(title, description, priceWei) {
   try {
     // Convert the price to Wei if it's in Ether.
@@ -557,42 +570,56 @@ async function listItem(title, description, priceWei) {
     const gasEstimate = await marketplaceContract.methods
       .listItem(title, description, priceInWei)
       .estimateGas({ from: account });
-    const gasLimit = Math.floor(gasEstimate * 1.5); // Increase gas limit by 50% as a buffer.
+	//// Increase gas limit by 50% as a buffer.
+    const gasLimit = Math.floor(gasEstimate * 1.5); 
     // Send the transaction with the calculated gas limit.
     const tx = await marketplaceContract.methods
       .listItem(title, description, priceInWei)
       .send({ from: account, gas: gasLimit });
+	// item listed succcessfully
     console.log("Item listed successfully:", tx);
+	// update all listed items
     await getAllItems();
   } catch (error) {
+	// error listing the item 
     console.error("Error listing item:", error);
     alert("Error listing item: " + error.message);
   }
 }
 
+// update the balance of the account 
 async function updateBalance() {
   if (account && web3.utils.isAddress(account)) {
     web3.eth.getBalance(account, (err, balance) => {
       if (err) {
+		// error fetching the balance
         console.error("Error fetching balance:", err);
       } else {
+		// get and display account balance
         document.getElementById("balance").textContent =
           web3.utils.fromWei(balance, "ether") + " ETH";
       }
     });
   } else {
+	// error fetching the balance
     console.error("Invalid Ethereum address.");
   }
 }
 
+// display both sold and avaliable items
 async function getAllItems() {
   try {
+	// all getAllItems from the contract 
     const items = await marketplaceContract.methods.getAllItems().call();
+	// display all items in the marketplace from itemList in HTML
     const itemListElement = document.getElementById("itemList");
     itemListElement.innerHTML = "";
     items.forEach((item) => {
       const itemElement = document.createElement("li");
       const priceInEth = web3.utils.fromWei(item.price.toString(), "ether");
+	  // display item title, description, price, the address of the seller and buyer, and boolean avaliability status of the item
+	  // if item sold, purchase button will not display 
+	  // if item avaiable for purcahse, purcahse button will display  
       const itemDetails = `
   <div class="item-details">
     <div class="item-title">Title: ${item.title}</div>
@@ -611,38 +638,47 @@ async function getAllItems() {
       itemListElement.appendChild(itemElement);
     });
   } catch (error) {
+	// error fetching items
     console.error("Error fetching all items:", error);
   }
 }
 
+// purcahse item function
 async function purchaseItem(itemId) {
   try {
+	// item function from the contract
     const item = await marketplaceContract.methods.items(itemId).call();
     const priceInWei = item.price;
     const priceInEth = web3.utils.fromWei(priceInWei, "ether");
     console.log(priceInWei);
     console.log(priceInEth);
+	// purchase item function from the contract
     const tx = await marketplaceContract.methods
       .purchaseItem(itemId)
       .send({ from: account, value: priceInWei });
+	// item purchased succcessfully
     console.log("Purchase successful:", tx);
-    await getAllItems(); // Refresh the list to reflect the purchase
+	// Refresh the list to reflect the purchase
+    await getAllItems(); 
+	// update the balance of the account when the contract subtract from the buyer and gives item price to the seller
     updateBalance();
   } catch (error) {
+	// error purchasing the item
     console.error("Error purchasing item:", error);
     alert("Error purchasing item: " + error.message);
   }
 }
 
+// initiate the contract with contract abi and contract address
 async function initContract() {
   marketplaceContract = new web3.eth.Contract(abi, contractAddress);
 }
 
+// connect to the wallet, initiate the contract, and display all items
 document.addEventListener("DOMContentLoaded", async () => {
   await connectWallet();
   await initContract();
   await getAllItems();
-
   const listItemForm = document.getElementById("listItemForm");
   listItemForm.addEventListener("submit", async (event) => {
     event.preventDefault();
