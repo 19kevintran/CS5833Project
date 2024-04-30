@@ -82,7 +82,7 @@ button[type="submit"]:hover {
 }
 
 .item-sold {
-    color: #dc3545;  /* Red for sold status */
+    color: #dc3545;  
     font-weight: bold;
 }
 
