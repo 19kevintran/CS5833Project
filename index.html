@@ -4,15 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Marketplace DApp</title>
+    <!-- include styles.css -->
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="container">
         <h1>Marketplace DApp</h1>
+        <!-- display account information (address and balance) -->
         <div id="accountInfo">
             <p><strong>Account:</strong> <span id="account"></span></p>
             <p><strong>Balance:</strong> <span id="balance"></span></p>
         </div>
+        <!-- list an item -->
         <div id="listItemForm">
             <h2>List an Item</h2>
             <form id="listItemForm">
@@ -25,12 +28,15 @@
                 <button type="submit">List Item</button>
             </form>
         </div>
+        <!-- display both sold and availiable items -->
         <div id="allItems">
             <h2>All Listed Items</h2>
             <ul id="itemList"></ul>
         </div>
     </div>
+    <!-- include web3 -->
     <script src="https://cdn.jsdelivr.net/npm/web3@1.5.2/dist/web3.min.js"></script>
+    <!-- include app.js -->
     <script src="app.js"></script>
 </body>
 </html>
